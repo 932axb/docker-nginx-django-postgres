@@ -1,0 +1,76 @@
+version: '2'
+
+services:
+
+  # nginx
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: project-nginx
+    hostname: nginx
+    ports:
+#      - "80:8080"
+      - "8000:8000"
+    volumes_from:
+      - backend
+    links:
+      - backend:backend
+
+  # Django backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-dev
+    container_name: project-backend
+    hostname: web
+    env_file: configs/dev/backend.env
+    volumes:
+      - ./backend/django:/code  # mount code into container in a dev version
+    command: python manage.py runserver 0.0.0.0:8000
+#    command: /usr/local/bin/gunicorn utils.wsgi:application -w 2 -b :8008
+#    env_file: configs/env/dev.env
+    links:
+      - postgres
+    depends_on:
+      - postgres
+      - frontend-static
+    volumes_from:
+      - frontend-static
+
+
+  # Postgresql database service
+  postgres:
+#    restart: always
+    build:
+      context: ./postgresql
+      dockerfile: Dockerfile-dev
+    container_name: project-dev-postgres
+    hostname: postgres
+#    image: akimat-ksk-postgres:latest
+    ports:
+      - "5432"
+    env_file: configs/dev/postgres.env
+    command: "postgres"
+    volumes:
+      - /var/srv/docker/docker-nginx-django-postgres/postgresql:/var/lib/postgresql/data
+      - /var/srv/docker/docker-nginx-django-postgres/postgresql-backup:/backup
+#    logging:
+#      driver: syslog
+#      options:
+#        tag: "akimat-ksk-postgresql"
+
+
+  frontend-static:
+    container_name: project-frontend
+#    command: /start.sh
+    build:
+      context: ./frontend-static
+      dockerfile: Dockerfile
+#    volumes_from:
+#      - backend
+
+    volumes:
+      - ./frontend-static/static:/code/static # mount data into backend container static
+#    ports:
+#      - "3000:3000"
