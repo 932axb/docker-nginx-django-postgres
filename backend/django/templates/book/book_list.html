@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}Books{% endblock %}
+{% block content %}
+
+    {% for book in books %}
+        <table>
+            <tr>
+                <td>
+                    <a href="{{ book.get_absolute_url }}">{{ book }}</a>
+                </td>
+            </tr>
+        </table>
+    {% endfor %}
+{% endblock %}

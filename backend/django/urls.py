@@ -7,7 +7,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # url(r'^api/', include('apps.tasks.urls')),
     url(r'^', include('apps.main.urls')),
-    url(r'^book/', include('apps.book.urls')),
+    url(r'^books/', include('apps.book.urls')),
 
     # url(r'^', include(router.urls)),
 

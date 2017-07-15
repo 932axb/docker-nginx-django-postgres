@@ -97,7 +97,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+STATIC_ROOT = BASE_DIR + "/static"
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
